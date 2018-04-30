@@ -1,46 +1,49 @@
-//
-//  AppDelegate.swift
-//  iBeaconSensor
-//
-//  Created by perkinsung on 2016/12/14.
-//  Copyright © 2016年 perkinsung. All rights reserved.
-//
-
 import UIKit
+import CoreLocation
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate
+{
 
     var window: UIWindow?
-
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    var locationManager = CLLocationManager()           //定位管理員
+    var notificationCenter:UNUserNotificationCenter!    //推播中心
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool
+    {
+        //設定要監聽的iBeacon裝置
+        let uuid = UUID(uuidString: "70DCA321-1BF2-4BE2-B384-E4595E162EEB")
+        let region = CLBeaconRegion(proximityUUID: uuid!, major: 20000, minor: 500, identifier: "")
+        //設定進出region的時候要收到通知
+        region.notifyOnEntry = true
+        region.notifyOnExit = true
+        region.notifyEntryStateOnDisplay = true
+        //要求持續定位授權（需配合info.plist的Privacy - Location Always Usage Description）
+        locationManager.requestAlwaysAuthorization()
+        //開始掃描iBeacon的region，觸發<1號代理方法>
+        locationManager.startRangingBeacons(in: region)
+        //開始監聽iBeacon的region，觸發<2號代理方法>和<3號代理方法>
+        locationManager.startMonitoring(for: region)
+        
+        //初始化推播中心
+        notificationCenter = UNUserNotificationCenter.current()
+        //要求授權推播功能
+        notificationCenter.requestAuthorization(options: [.alert,.sound,.badge]) { (granted, error) in
+            if !granted
+            {
+                print("使用者未授權推播")
+            }
+        }
+        
         return true
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    func applicationWillEnterForeground(_ application: UIApplication)
+    {
+        //清除推播小紅點
+        application.applicationIconBadgeNumber = 0
     }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-
-
+    
 }
 
