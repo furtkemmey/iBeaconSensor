@@ -69,7 +69,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UNUserNotificat
         content.sound = UNNotificationSound.default()
         //製作推播需求物件（trigger為nil表示立即發送）
         let request = UNNotificationRequest(identifier: "enterRegion", content: content, trigger: nil)
-        //加到推播中心的排程  
+        //加到推播中心的排程
         notificationCenter.add(request, withCompletionHandler: nil)
     }
     

@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     {
         //設定要監聽的iBeacon裝置
         let uuid = UUID(uuidString: "70DCA321-1BF2-4BE2-B384-E4595E162EEB")
-        let region = CLBeaconRegion(proximityUUID: uuid!, major: 20000, minor: 500, identifier: "")
+        let region = CLBeaconRegion(proximityUUID: uuid!, major: 20000, minor: 499, identifier: "MyiBeacon:499")
         //設定進出region的時候要收到通知
         region.notifyOnEntry = true
         region.notifyOnExit = true
